@@ -13,4 +13,7 @@ dans le repertoire général (~/Documents/loudspeakerSoftware)
 
 // APPLIQUER MODIFICATIONS: git status
 
-// SYNCHRONISER TOUT LE GIT ONLINE: git commit -am 'titre du commit'
+// SAUVEGARDER LE GIT DANS LE REPOSITORY: git commit -am 'titre du commit'
+
+// UPLOAD TOUT LE GIT: git push 
+// DOWNLOAD TOUT LE GIT: git pull 
