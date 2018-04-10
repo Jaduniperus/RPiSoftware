@@ -1,0 +1,19 @@
+PIN CONNEXIONS TDA71317
+-----------------------
+pin 13 : VCC (9V) 
+pin 15 : GND <-> pin 06 RPi
+-----------------------
+pin 16 : SCL <-> pin 05 RPi
+pin 17 : SDA <-> pin 03 RPi
+pin 18 : ADD
+	si ADD = GNd => 0x42
+	si ADD = 9V (ou rien) => 0x43
+Pour nous on a 
+TDA avec filtres bass: ADD = 9V, 0x43
+TDA avec filtres aigus: ADD = GND, 0x42
+-----------------------
+pin 1 : audio Left input
+pin 12 : audio Left output
+pin 19 : audio Right output
+pin 30 : audio Right input
+-----------------------

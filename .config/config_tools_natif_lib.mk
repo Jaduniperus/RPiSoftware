@@ -1,0 +1,1 @@
+LIB=-lstdc++ -lpthread

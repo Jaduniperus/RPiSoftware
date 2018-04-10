@@ -1,0 +1,6 @@
+ROOT_DIR=bin
+EXEC=exec
+OUTFOLDER=out
+SOURCE_DIR=src
+DOC_DIR=doc
+PATCH_DIR=patch

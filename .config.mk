@@ -1,0 +1,17 @@
+include .config/config_tools_natif.mk
+include .config/config_tools_natif_lib.mk
+include .config/config_tools_natif_link.mk
+include .config/config_tools_natif_flags.mk
+include .config/config_tools_cross.mk
+include .config/config_tools_cross_lib.mk
+include .config/config_tools_cross_link.mk
+include .config/config_tools_cross_flags.mk
+include .config/config_tools_libs.mk
+include .config/config_tools_flags.mk
+include .config/config_options_hard_arch.mk
+include .config/config_options_warning.mk
+include .config/config_options_optimisation.mk
+include .config/config_options_linkage.mk
+include .config/config_options_debug.mk
+include .config/config_path.mk
+include .config/config_mode.mk

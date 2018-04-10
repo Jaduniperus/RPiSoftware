@@ -1,0 +1,925 @@
+# Made by 0x223252, for RCO purpose only.
+# All right reserved
+#!/bin/bash
+
+INSTALL=
+
+#verification de la presence des paquet necessaires et proposition d'installation
+PACKETS=" gcc g++ xutils-dev dialog" 
+for TMP in $PACKETS
+do
+	dpkg -s $TMP 2> .log 1> /dev/null
+	if [ "$(cat .log)" != "" ]; then
+		echo "$TMP is missing, you need it to continue."
+		echo "would you want to install it ? (Y/n)"
+		read REP
+		if [ "$REP" != "n" ] && [ "$REP" != "N" ]; then
+			INSTALL+=" $TMP"
+		fi
+	fi
+	rm .log
+done
+
+if [ "$INSTALL" != "" ]; then
+	sudo apt-get install -y --force-yes $INSTALL
+fi
+
+# si un fichier nomé . config existe on le supprime et on 
+# créait quoi qu'il arrive un dossier .config
+tmpFile=/tmp/config_dialog
+
+[ -f .config ] && rm .config
+[ ! -d .config ] && mkdir .config
+
+
+# navtive tools
+configfile='.config/config_tools_natif.mk'	
+[ ! -f "$configfile" ] && echo "CC=gcc" > $configfile && echo "CXX=g++" >> $configfile
+
+configfile='.config/config_tools_natif_lib.mk'	
+[ ! -f "$configfile" ]&& echo "LIB=" > $configfile
+
+configfile='.config/config_tools_natif_link.mk'	
+[ ! -f "$configfile" ]&& echo "LINK=" > $configfile
+
+configfile='.config/config_tools_natif_flags.mk'	
+[ ! -f "$configfile" ]&& echo "NATIF_FLAGS=" > $configfile
+
+# cross tools
+configfile='.config/config_tools_cross.mk'
+[ ! -f "$configfile" ] && echo "LABEL=arm" > $configfile  && echo "CROSS_CC=arm-linux-gnueabi-gcc" >> $configfile && echo "CROSS_CXX=arm-linux-gnueabi-g++" >> $configfile
+
+configfile='.config/config_tools_cross_lib.mk'	
+[ ! -f "$configfile" ]&& echo "CROSS_LIB=" > $configfile
+
+configfile='.config/config_tools_cross_link.mk'	
+[ ! -f "$configfile" ]&& echo "CROSS_LINK=" > $configfile
+
+configfile='.config/config_tools_cross_flags.mk'	
+[ ! -f "$configfile" ]&& echo "CROSS_FLAGS=" > $configfile
+
+
+# native / cross compile flag
+configfile='.config/config_tools_libs.mk'	
+[ ! -f "$configfile" ] && echo "PTHREAD=off" > $configfile && echo "SDL1=off" >> $configfile && echo "SDL2=off" >> $configfile
+
+configfile='.config/config_tools_flags.mk'	
+[ ! -f "$configfile" ] && echo "FLAGS+=" > $configfile
+
+
+# hardware hard_arch (natif/cross)
+configfile='.config/config_options_hard_arch.mk'	
+[ ! -f "$configfile" ] && echo "HARD_ARCH=natif" > $configfile
+
+configfile='.config/config_options_warning.mk'	
+[ ! -f "$configfile" ] && echo "WARNING=std" > $configfile
+
+configfile='.config/config_options_linkage.mk'	
+[ ! -f "$configfile" ] && echo "LINKAGE=dynamique" > $configfile
+	
+configfile='.config/config_options_optimisation.mk'	
+[ ! -f "$configfile" ] && echo "OPTIMISATION=std" > $configfile
+
+configfile='.config/config_options_debug.mk'	
+[ ! -f "$configfile" ] && echo "GDB=off" > $configfile && echo "GPROF=off" >> $configfile && echo "FULL_CPP=off" >> $configfile
+
+# work dir
+configfile='.config/config_path.mk'	
+[ ! -f "$configfile" ] && echo "ROOT_DIR=bin" > $configfile && echo "EXEC=exec" >> $configfile && echo "OUTFOLDER=out" >> $configfile && echo "SOURCE_DIR=src" >> $configfile && echo "DOC_DIR=doc" >> $configfile && echo "PATCH_DIR=patch" >> $configfile
+
+# compile mode
+configfile='.config/config_mode.mk'	
+[ ! -f "$configfile" ] && echo "MODE=debug" > $configfile
+
+# patch save
+configfile='.config/config_options_patch.mk'	
+[ ! -f "$configfile" ] && echo "PATCH=" > $configfile
+
+configfile='.config.mk'	
+if [ ! -f "$configfile" ]; then 
+	echo "include .config/config_tools_natif.mk" > $configfile
+	echo "include .config/config_tools_natif_lib.mk" >> $configfile
+	echo "include .config/config_tools_natif_link.mk" >> $configfile
+	echo "include .config/config_tools_natif_flags.mk" >> $configfile
+	echo "include .config/config_tools_cross.mk" >> $configfile
+	echo "include .config/config_tools_cross_lib.mk" >> $configfile
+	echo "include .config/config_tools_cross_link.mk" >> $configfile
+	echo "include .config/config_tools_cross_flags.mk" >> $configfile
+	echo "include .config/config_tools_libs.mk" >> $configfile
+	echo "include .config/config_tools_flags.mk" >> $configfile
+
+	echo "include .config/config_options_hard_arch.mk" >> $configfile
+	echo "include .config/config_options_warning.mk" >> $configfile
+	echo "include .config/config_options_optimisation.mk" >> $configfile
+	echo "include .config/config_options_linkage.mk">>$configfile
+	echo "include .config/config_options_debug.mk" >> $configfile
+
+	echo "include .config/config_path.mk" >> $configfile
+
+	echo "include .config/config_mode.mk">> $configfile
+fi
+
+# création du makefile
+printMake () {
+# All rigth reserved
+
+include .config.mk
+
+FLAGS+= -D'BY_LINUX_MAKEFILE'
+LDFLAGS+=
+
+LAST_HARD_ARCH=null
+LAST_MODE=null
+LAST_WARNING=null
+LAST_GPROF=null
+LAST_GDB=null
+LAST_LINKAGE=null
+
+LAST_HARD_ARCH=\$(shell [ -f \".last_config\" ] && cat .last_config | grep HARD_ARCH  | cut -d '=' -f2)
+LAST_MODE=\$(shell      [ -f \".last_config\" ] && cat .last_config | grep MODE       | cut -d '=' -f2)
+LAST_WARNING=\$(shell   [ -f \".last_config\" ] && cat .last_config | grep WARNING    | cut -d '=' -f2)
+LAST_GPROF=\$(shell     [ -f \".last_config\" ] && cat .last_config | grep GPROF      | cut -d '=' -f2)
+LAST_GDB=\$(shell       [ -f \".last_config\" ] && cat .last_config | grep GDB        | cut -d '=' -f2)
+LAST_LINKAGE=\$(shell   [ -f \".last_config\" ] && cat .last_config | grep LINKAGE    | cut -d '=' -f2)
+
+EQ_HARD_ARCH=\$(shell [ -f \".last_config\" ] && [ \"\$(HARD_ARCH)\" = \"\$(LAST_HARD_ARCH)\" ] && echo true)
+EQ_MODE=\$(shell      [ -f \".last_config\" ] && [      \"\$(MODE)\" = \"\$(LAST_MODE)\"      ] && echo true)
+EQ_WARNING=\$(shell   [ -f \".last_config\" ] && [   \"\$(WARNING)\" = \"\$(LAST_WARNING)\"   ] && echo true)
+EQ_GPROF=\$(shell     [ -f \".last_config\" ] && [     \"\$(GPROF)\" = \"\$(LAST_GPROF)\"     ] && echo true)
+EQ_GDB=\$(shell       [ -f \".last_config\" ] && [       \"\$(GDB)\" = \"\$(LAST_GDB)\"       ] && echo true)
+EQ_LINKAGE=\$(shell   [ -f \".last_config\" ] && [   \"\$(LINKAGE)\" = \"\$(LAST_LINKAGE)\"   ] && echo true)
+
+ifneq (\$(EQ_HARD_ARCH),true)
+	DEPEND=mrproper
+endif
+
+ifneq (\$(EQ_MODE),true)
+	DEPEND=mrproper
+endif
+
+ifneq (\$(EQ_WARNING),true)
+	DEPEND=mrproper
+endif
+		
+ifneq (\$(EQ_GPROF),true)
+	DEPEND=mrproper
+endif
+
+ifneq (\$(EQ_GDB),true)
+	DEPEND=mrproper
+endif
+
+ifneq (\$(EQ_LINKAGE),true)
+	DEPEND=mrproper
+endif
+
+ifneq (\$(HARD_ARCH),natif)
+	CXX=\$(CROSS_CXX)
+	CC=\$(CROSS_CC)
+	CFLAGS+= \$(CROSS_LIB)
+	LDFLAGS+= \$(CROSS_LINK)
+	FLAGS+= \$(CROSS_FLAGS)
+else
+	CFLAGS+= \$(LIB)
+	LDFLAGS+= \$(LINK)
+	FLAGS+= \$(NATIF_FLAGS)
+endif
+
+ifeq (\$(MODE),release)	
+	FLAGS+= -D'MODE_RELEASE'
+else	
+	FLAGS+= -D'MODE_DEBUG'
+endif
+
+ifeq (\$(LINKAGE),static)	
+	FLAGS+= -static
+endif
+
+ifeq (\$(WARNING),all)
+	FLAGS+= -Wall -Wshadow -Wextra -fexecptions
+else ifeq (\$(WARNING), none)
+	FLAGS+= -w
+endif
+
+ifeq (\$(PTHREAD),on)
+	FLAGS+= -pthread
+endif
+
+ifeq (\$(SDL1),on)
+	FLAGS+= -lSDL
+endif
+
+ifeq (\$(SDL2),on)
+	FLAGS+= -lSDL2
+endif
+
+ifeq (\$(GPROF),on)
+	FLAGS+= -pg
+	LDFLAGS+= -pg
+endif
+
+ifeq (\$(GDB),on)
+	FLAGS+= -g
+	LDFLAGS+= -g
+endif
+
+ifeq (\$(FULL_CPP),on)
+	CC=\$(CXX)
+endif
+
+CPP_SRC=\$(shell find ./\$(SOURCE_DIR) -name *.cpp)
+CPP_OBJ=\$(CPP_SRC:.cpp=.o)
+
+C_SRC=\$(shell find ./\$(SOURCE_DIR) -name *.c)
+C_OBJ=\$(C_SRC:.c=.o)
+
+OBJ=\$(C_OBJ) \$(CPP_OBJ)
+
+all: \$(ROOT_DIR) cible \$(DEPEND) makedeps \$(ROOT_DIR)/\$(EXEC) .config \$(ROOT_DIR)/\$(OUTFOLDER)
+	@echo \"+=======================================+\"
+	@echo \"|	\\\\033[1;92mBuid done\\\\033[0m\\t\\t\\t|\"
+	@echo \"| for hard_arch : \\\\033[1;92m\$(shell file \$(ROOT_DIR)/\$(EXEC) | cut -d ',' -f2)\\\\033[0m   \\t\\t|\"
+	@echo \"| in : \\\\033[1;92m\$(MODE)\\\\033[0m mode \t\t\t|\"
+	@echo \"+=======================================+\"
+
+\$(ROOT_DIR):
+	@\$(shell [ -d \"\$(ROOT_DIR)\" ] || mkdir -p \"\$(ROOT_DIR)\" )
+
+\$(ROOT_DIR)/\$(OUTFOLDER): \$(ROOT_DIR)
+	@\$(shell [ ! -d \"\$(ROOT_DIR)/\$(OUTFOLDER)\" ] && mkdir -p \"\$(ROOT_DIR)/\$(OUTFOLDER)\" )
+
+cible:
+	@echo  > .last_config
+	@echo \"HARD_ARCH=\$(HARD_ARCH)\" >> .last_config
+	@echo \"TARGET=\$(TARGET)\" >> .last_config
+	@echo \"MODE=\$(MODE)\" >> .last_config
+	@echo \"WARNING=\$(WARNING)\" >> .last_config
+	@echo \"GPROF=\$(GPROF)\" >> .last_config
+	@echo \"GDB=\$(GDB)\" >> .last_config
+	@echo \"LINKAGE=\$(LINKAGE)\" >> .last_config
+	
+docs:
+	@doxywizard doc/Doxyfile
+
+\$(ROOT_DIR)/\$(EXEC): \$(OBJ)
+	\$(CXX) -o \$@ \$^ \$(LDFLAGS)
+
+%%.o: %%.c
+	\$(CC) -c -o \$@ \$< \$(FLAGS) \$(CFLAGS)
+%%.o: %%.cpp
+	\$(CXX) -c -o \$@ \$< \$(FLAGS) \$(CFLAGS)
+
+
+clean:
+	rm -f \$(shell find ./\$(SOURCE_DIR)/ -name *.o) \$(shell find ./\$(SOURCE_DIR)/ -name *.so)
+
+cleanDoc:
+	rm -f -r doc/html/*
+	rm -f -r doc/latex/*
+	rm -f -r doc/xml/*
+	rm -f -r doc/man/*
+	rm -f -r doc/rtf/*
+
+cleanDump:	
+	rm -f -r \$(ROOT_DIR)/\$(OUTFOLDER)/*
+
+mrproper: clean cleanDump cleanDoc
+	rm -f \$(ROOT_DIR)/\$(EXEC)
+
+empty: mrproper
+	@echo \"#!/bin/bash\" > script.sh
+	@echo \'rm -r \$\$(ls -a | grep -v -E \\\"^((configure)|(\.+)|(src)|(patch)|(res)|(.git))\$\$\\\")\' >> script.sh
+	@chmod +x script.sh
+	@./script.sh
+
+makedeps:
+	@makedepend -Y \$(C_SRC) \$(CPP_SRC) 2> /dev/null
+
+.config:
+	@[ ! -f .config ] && echo > .config
+
+printEnv:
+	@echo \"LAST_HARD_ARCH=\"\$(LAST_HARD_ARCH)
+	@echo \"LAST_MODE=\"\$(LAST_MODE)
+	@echo \"LAST_WARNING=\"\$(LAST_WARNING)
+	@echo \"LAST_GPROF=\"\$(LAST_GPROF)
+	@echo \"LAST_GDB=\"\$(LAST_GDB)
+	@echo \"LAST_LINKAGE=\"\$(LAST_LINKAGE)
+	@echo \"HARD_ARCH=\"\$(HARD_ARCH)
+	@echo \"MODE=\"\$(MODE)
+	@echo \"WARNING=\"\$(WARNING)
+	@echo \"GPROF=\"\$(GPROF)
+	@echo \"LAST_GDB=\"\$(LAST_GDB)
+	@echo \"LINKAGE=\"\$(LINKAGE)
+	@echo \"EQ_HARD_ARCH=\"\$(EQ_HARD_ARCH)
+	@echo \"EQ_MODE=\"\$(EQ_MODE)
+	@echo \"EQ_WARNING=\"\$(EQ_WARNING)
+	@echo \"EQ_GPROF=\"\$(EQ_GPROF)
+	@echo \"EQ_GDB=\"\$(EQ_GDB)
+	@echo \"EQ_LINKAGE=\"\$(EQ_LINKAGE)
+
+" > makefile
+}
+
+[ ! -f makefile ] && printMake && exit
+
+tool_natif () {
+	configfile='.config/config_tools_natif.mk'	
+	[ ! -f "$configfile" ] && echo "CC=gcc" > $configfile && echo "CXX=g++" >> $configfile
+	items=$(awk -F\= '{print $1,$2}' $configfile)
+	dialog --menu "Natif" 0 0 5 $items 2> $tmpFile
+
+	retval=$?
+	parameter=$(cat $tmpFile)
+
+	[ $retval -eq 0 ] && tochange=$parameter || return 1
+
+	val=$(awk -F\= -v x=$tochange '$1==x {print $2}' $configfile)
+	dialog --inputbox "Enter new value($tochange)" 0 0 $val 2> $tmpFile
+
+	dialog --title "Confirmation"  --yesno "Commit ?" 0 0
+	case $? in
+		0) 	newval=$(cat $tmpFile)
+			awk -v x=$tochange -v n=$newval ' BEGIN {FS=OFS="="}$1==x {$2=n} {print} ' $configfile > $configfile.tmp
+			mv $configfile.tmp $configfile
+			;;
+		1|255) dialog --infobox "No Changes done" 0 0
+			sleep 2
+			;;
+	esac
+	dialog --textbox $configfile 0 0
+}
+
+tool_native_lib () {
+	configfile='.config/config_tools_natif_lib.mk'
+	[ ! -f "$configfile" ]&& echo "LIB=" > $configfile
+
+	nano -c $configfile
+	return
+}
+
+
+tool_native_link () {
+	configfile='.config/config_tools_natif_link.mk'
+	[ ! -f "$configfile" ]&& echo "LINK=" > $configfile
+
+	nano -c $configfile
+	return
+}
+
+tool_natif_flags () {
+	configfile='.config/config_tools_natif_flags.mk'	
+	[ ! -f "$configfile" ]&& echo "NATIF_FLAGS=" > $configfile
+	
+	nano -c $configfile
+	return
+}
+
+tool_cross () {
+	configfile='.config/config_tools_cross.mk'
+	[ ! -f "$configfile" ] && echo "LABEL=arm" > $configfile  && echo "CROSS_CC=arm-linux-gnueabi-gcc" >> $configfile && echo "CROSS_CXX=arm-linux-gnueabi-g++" >> $configfile
+	items=$(awk -F\= '{print $1,$2}' $configfile)
+	dialog --menu "cross" 0 0 5 $items 2> $tmpFile	
+
+	retval=$?
+	parameter=$(cat $tmpFile)
+
+	[ $retval -eq 0 ] && tochange=$parameter || return 1
+
+	val=$(awk -F\= -v x=$tochange '$1==x {print $2}' $configfile)
+	dialog --inputbox "Enter new value($tochange)" 0 0 $val 2> $tmpFile
+
+	dialog --title "Confirmation"  --yesno "Commit ?" 0 0
+	case $? in
+		0) 	newval=$(cat $tmpFile)
+			awk -v x=$tochange -v n=$newval ' BEGIN {FS=OFS="="}$1==x {$2=n} {print} ' $configfile > $configfile.tmp
+			mv $configfile.tmp $configfile
+			;;
+		1|255) dialog --infobox "No Changes done" 0 0
+			sleep 2
+			;;
+	esac
+	dialog --textbox $configfile 0 0
+}
+
+tool_cross_lib () {
+	configfile='.config/config_tools_cross_lib.mk'	
+	[ ! -f "$configfile" ]&& echo "CROSS_LIB=" > $configfile
+	
+	nano -c $configfile
+	return
+}
+
+tool_cross_link () {
+	configfile='.config/config_tools_cross_link.mk'	
+	[ ! -f "$configfile" ]&& echo "CROSS_LINK=" > $configfile
+	
+	nano -c $configfile
+	return
+}
+
+
+tool_cross_flags () {
+	configfile='.config/config_tools_cross_flags.mk'	
+	[ ! -f "$configfile" ]&& echo "CROSS_FLAGS=" > $configfile
+	
+	nano -c $configfile
+	return
+}
+
+tool_flags () {
+	configfile='.config/config_tools_flags.mk'	
+	[ ! -f "$configfile" ]&& echo "FLAGS=" > $configfile
+	
+	nano -c $configfile
+	return
+}
+
+tool_libs () {
+	configfile='.config/config_tools_libs.mk'
+	[ ! -f "$configfile" ] && echo "PTHREAD=off" > $configfile && echo "SDL1=off" >> $configfile && echo "SDL2=off" >> $configfile
+
+
+	pthread=$(cat $configfile | grep PTHREAD | cut  -d '=' -f2)
+	sdl1=$(cat $configfile | grep SDL1 | cut  -d '=' -f2)
+	sld2=$(cat $configfile | grep SDL2 | cut  -d '=' -f2)
+
+	dialog --nocancel \
+		--checklist "debug option" 15 40 0 \
+		1 "pthread" $pthread \
+		2 "sdl1" $sdl1 \
+		3 "sld2" $sld2 2> $tmpFile
+
+	retval=$?
+	parameter=$(cat $tmpFile)
+
+	pthread="off"
+	sdl1="off"
+	sdl2="off"
+
+	for item in $parameter
+	do
+		case $item in
+			1)	pthread="on"
+				;;
+			2)	sdl1="on"
+				;;
+			3)	sdl2="on"
+				;;
+		esac
+	done
+
+	echo "PTHREAD="$pthread > $configfile
+	echo "SDL1="$sdl1 >> $configfile
+	echo "SDL2="$sdl2 >> $configfile
+}
+
+tools () {
+	dialog --cancel-label "Back" \
+		--title "SLAMer" \
+		--menu "Tools chaine" 15 55 5 \
+			8 "Globals libs" \
+			9 "Globals flags" \
+			1 "Natif" \
+			2 "Additional native libs" \
+			3 "Additional native links" \
+			10 "Additional native flags" \
+			4 "Cross tool" \
+			5 "Additional cross libs " \
+			6 "Additional cross links " \
+			11 "Additional cross flags " 2> $tmpFile
+
+	retv=$?
+	choice=$(cat $tmpFile)
+
+	case $choice in
+		1) 	tool_natif
+			tools
+			;;
+		2) 	tool_native_lib
+			tools
+			;;
+		3) 	tool_native_link
+			tools
+			;;
+		4) 	tool_cross
+			tools
+			;;
+		5) 	tool_cross_lib
+			tools
+			;;
+		6) 	tool_cross_link
+			tools
+			;;
+		8) 	tool_libs
+			tools
+			;;
+		9) 	tool_flags
+			tools
+			;;
+		10) tool_natif_flags
+			tools
+			;;
+		11) tool_cross_flags
+			tools
+			;;
+	esac
+}
+
+options_hard_arch () {
+	configfile='.config/config_options_hard_arch.mk'	
+	[ ! -f "$configfile" ] && echo "HARD_ARCH=natif" > $configfile
+	active=$(cat $configfile | grep HARD_ARCH | cut -d '=' -f2)
+	
+	labelfile='.config/config_tools_cross.mk'
+	[ -f "$labelfile" ] && crossTool=$(cat $labelfile | grep LABEL | cut -d '=' -f2)
+	
+	cross="off"
+	natif="off"
+	case $active in
+		natif)
+			natif="on"
+			;;
+		*)
+			cross="on"
+			;;
+	esac
+
+	dialog --cancel-label "Back" \
+		--radiolist "choix de la cible de compilation" 20 61 5 \
+		1 "compilé en natif" $natif\
+		2 "corss compilé pour "$crossTool $cross 2> $tmpFile
+
+	retv=$?
+	choice=$(cat $tmpFile)
+
+	case $choice in
+		1)	echo "HARD_ARCH=natif" > $configfile
+			;;
+		2)	echo "HARD_ARCH="$crossTool > $configfile
+			;;
+	esac
+
+	if [ $cross == "on" ]; then
+		configfile='.config/config_tools_cross.mk'
+		CROSS_CC=$(cat $configfile | grep CROSS_CC | cut -d '=' -f2)
+		CROSS_CXX=$(cat $configfile | grep CROSS_CXX | cut -d '=' -f2)
+
+		if [ "$CROSS_CC" == "arm-linux-gnueabi-gcc" ]; then
+			dpkg -s gcc-arm-linux-gnueabi 2> .log 1> /dev/null
+			if [ "$(cat .log)" != "" ]; then
+				echo "gcc-arm is missing, you need it to continue."
+				echo "would you want to install it ? (Y/n)"
+				read INSTALL_GCC_ARM
+				if [ $INSTALL_GCC_ARM != "n" ] && [ $INSTALL_GCC_ARM != "N" ]; then
+					INSTALL+= gcc-arm-linux-gnueabi
+				fi
+			fi
+			rm .log
+		fi
+
+		if [ "$CROSS_CXX" == "arm-linux-gnueabi-g++" ]; then
+			dpkg -s g++-arm-linux-gnueabi 2> .log 1> /dev/null
+			if [ "$(cat .log)" != "" ]; then
+				echo "g++-arm is missing, you need it to continue."
+				echo "would you want to install it ? (Y/n)"
+				read INSTALL_GCC_ARM
+				if [ $INSTALL_GCC_ARM != "n" ] && [ $INSTALL_GCC_ARM != "N" ]; then
+					INSTALL+= g++-arm-linux-gnueabi
+				fi
+			fi
+			rm .log
+		fi
+	fi
+}
+
+options_warning () {
+	configfile='.config/config_options_warning.mk'	
+	[ ! -f "$configfile" ] && echo "WARNING=std" > $configfile
+	active=$(cat $configfile | grep WARNING | cut -d '=' -f2)
+	
+	none="off"
+	all="off"
+	std="off"
+	case $active in
+		all)
+			all="on"
+			;;
+		none)
+			none="on"
+			;;
+		*)
+			std="on"
+			;;
+	esac
+	dialog --cancel-label "Back" \
+		--radiolist "niveau de warning" 20 61 5 \
+		1 "standard" $std\
+		2 "pas de warnning" $none\
+		3 "tous warning activés" $all 2> $tmpFile
+
+	retv=$?
+	choice=$(cat $tmpFile)
+
+	case $choice in
+		1)	echo "WARNING=std" > $configfile
+			;;
+		2)	echo "WARNING=none" > $configfile
+			;;
+		3)	echo "WARNING=all" > $configfile
+			;;
+	esac
+}
+
+options_optimisation () {
+	configfile='.config/config_options_optimisation.mk'	
+	[ ! -f "$configfile" ] && echo "OPTIMISATION=std" > $configfile
+	active=$(cat $configfile | grep OPTIMISATION | cut -d '=' -f2)
+	
+	size="off"
+	speed="off"
+	std="off"
+	case $active in
+		-Os)
+			size="on"
+			;;
+		-O2)
+			speed="on"
+			;;
+		*)
+			std="on"
+			;;
+	esac
+	dialog --cancel-label "Back" \
+		--radiolist "type d'optimisation" 20 61 5 \
+		1 "standard" $std\
+		2 "poptimisé en vitesse d'execution" $speed\
+		3 "optimisé en taille de sortie" $size 2> $tmpFile
+
+	retv=$?
+	choice=$(cat $tmpFile)
+
+	case $choice in
+		1)	echo "OPTIMISATION=" > $configfile
+			;;
+		2)	echo "OPTIMISATION=-O2" > $configfile
+			;;
+		3)	echo "OPTIMISATION=-Os" > $configfile
+			;;
+	esac
+}
+
+options_patch () {
+	configfile='.config/config_options_patch.mk'	
+	[ ! -f "$configfile" ] && echo "PATCH=" > $configfile
+	active=$(cat $configfile | grep PATCH | cut -d '=' -f2)
+	
+	incremental="off"
+	differentiel="off"
+	decremental="off"
+	case $active in
+		incremental)
+			incremental="on"
+			;;
+		differentiel)
+			differentiel="on"
+			;;
+		decremental)
+			decremental="on"
+			;;
+	esac
+	dialog --cancel-label "Back" \
+		--radiolist "type d'optimisation" 20 61 5 \
+		1 "incremental" $incremental\
+		2 "differentiel" $differentiel\
+		3 "decremental" $decremental 2> $tmpFile
+
+	retv=$?
+	choice=$(cat $tmpFile)
+
+	case $choice in
+		1)	echo "PATCH=incremental" > $configfile
+			;;
+		2)	echo "PATCH=differentiel" > $configfile
+			;;
+		3)	echo "PATCH=decremental" > $configfile
+			;;
+		*)	echo "PATCH=" > $configfile
+			;;
+	esac
+}
+
+option_linkage () {
+	configfile='.config/config_options_linkage.mk'	
+	[ ! -f "$configfile" ] && echo "LINKAGE=dynamique" > $configfile
+	active=$(cat $configfile | grep LINKAGE | cut -d '=' -f2)
+	
+	static="off"
+	dynamique="off"
+	case $active in
+		dynamique)
+			dynamique="on"
+			;;
+		static)
+			static="on"
+			;;
+	esac
+	dialog --cancel-label "Back" \
+		--radiolist "type de linkage" 20 61 5 \
+		1 "dynamique" $dynamique\
+		2 "statics" $static 2> $tmpFile
+
+	retv=$?
+	choice=$(cat $tmpFile)
+
+	case $choice in
+		1)	echo "LINKAGE=dynamique" > $configfile
+			;;
+		2)	echo "LINKAGE=static" > $configfile
+			;;
+	esac
+}
+
+options_debug () {
+	configfile='.config/config_options_debug.mk'	
+	[ ! -f "$configfile" ] && echo "GDB=off" > $configfile && echo "GPROF=off" >> $configfile && echo "FULL_CPP=off" >> $configfile
+
+
+	gdb=$(cat $configfile | grep GDB | cut  -d '=' -f2)
+	gprof=$(cat $configfile | grep GPROF | cut  -d '=' -f2)
+	cpp=$(cat $configfile | grep FULL_CPP | cut  -d '=' -f2)
+
+	dialog --nocancel \
+		--checklist "debug option" 15 40 5 \
+		1 "gdb" $gdb \
+		2 "gprof" $gprof \
+		3 "full cpp use" $cpp 2> $tmpFile
+
+	retval=$?
+	parameter=$(cat $tmpFile)
+
+	gdb="off"
+	gprof="off"
+	cpp="off"
+
+	for item in $parameter
+	do
+		case $item in
+			1)	gdb="on"
+				;;
+			2)	gprof="on"
+				;;
+			3)	cpp="on"
+				;;
+		esac
+	done
+
+	echo "GDB=$gdb" > $configfile
+	echo "GPROF=$gprof" >> $configfile
+	echo "FULL_CPP=$cpp" >> $configfile
+}
+
+options () { 
+	hard_arch=''
+	warning=''
+	optimisation=''
+	[ -f '.config/config_options_hard_arch.mk' ] &&  hard_arch=$(cat '.config/config_options_hard_arch.mk' | grep HARD_ARCH | cut -d '=' -f2)
+	[ -f '.config/config_options_warning.mk' ] &&  warning=$(cat '.config/config_options_warning.mk' | grep WARNING | cut -d '=' -f2)
+	[ -f '.config/config_options_optimisation.mk' ] &&  optimisation=$(cat '.config/config_options_optimisation.mk' | grep OPTIMISATION | cut -d '=' -f2)
+	[ -f '.config/config_options_linkage.mk' ] &&  linkage=$(cat '.config/config_options_linkage.mk' | grep LINKAGE | cut -d '=' -f2)
+
+	dialog --cancel-label "Back" \
+		--title "SLAMer" \
+		--menu "Options de compilation" 15 55 5 \
+			1 "Hardware arch : "$hard_arch \
+			2 "Warnning : "$warning \
+			3 "Optimisation : "$optimisation \
+			4 "Linkage : "$linkage \
+			5 "Debug" 2> $tmpFile
+
+	retv=$?
+	choice=$(cat $tmpFile)
+
+	case $choice in
+		1) 	options_hard_arch
+			options
+			;;
+		2) 	options_warning
+			options
+			;;
+		3) 	options_optimisation
+			options
+			;;
+		4)	option_linkage
+			options
+			;;
+		5) 	options_debug
+			options
+			;;
+	esac
+}
+
+path () {
+	configfile='.config/config_path.mk'	
+	[ ! -f "$configfile" ] && echo "ROOT_DIR=bin" > $configfile && echo "EXEC=exec" >> $configfile && echo "OUTFOLDER=out" >> $configfile && echo "SOURCE_DIR=src" >> $configfile && echo "DOC_DIR=doc" >> $configfile && echo "PATCH_DIR=patch" >> $configfile
+	items=$(awk -F\= '{print $1,$2}' $configfile)
+	dialog --menu "Path config" 0 0 0 $items 2> $tmpFile
+
+	retval=$?
+	parameter=$(cat $tmpFile)
+
+	[ $retval -eq 0 ] && tochange=$parameter || return 1
+
+	val=$(awk -F\= -v x=$tochange '$1==x {print $2}' $configfile)
+	dialog --inputbox "Enter new value($tochange)" 0 0 $val 2> $tmpFile
+
+	dialog --title "Confirmation"  --yesno "Commit ?" 0 0
+	case $? in
+		0) 	newval=$(cat $tmpFile)
+			awk -v x=$tochange -v n=$newval ' BEGIN {FS=OFS="="}$1==x {$2=n} {print} ' $configfile > $configfile.tmp
+			mv $configfile.tmp $configfile
+			;;
+		1|255) dialog --infobox "No Changes done" 0 0
+			sleep 2
+			;;
+	esac
+	dialog --textbox $configfile 0 0
+}
+
+mode () {
+	configfile='.config/config_mode.mk'	
+	[ ! -f "$configfile" ] && echo "MODE=debug" > $configfile
+	mode=$(cat $configfile | grep MODE | cut -d '=' -f2)
+
+	debug="off"
+	release="off"
+	case $mode in
+		debug)
+			debug="on"
+			;;
+		release)
+			release="on"
+			;;
+	esac
+	dialog --cancel-label "Back" \
+		--radiolist "mode de sortie" 20 61 5 \
+		1 "compilé sans aucun log de debug" $release\
+		2 "compilé avec les logs de debug affichable" $debug 2> $tmpFile
+
+	retv=$?
+	choice=$(cat $tmpFile)
+
+	case $choice in
+		1)	echo "MODE=release" > $configfile
+			;;
+		2)	echo "MODE=debug" > $configfile
+			;;
+	esac
+}
+
+patch () {
+	sleep 1
+}
+
+main () {	
+	dialog --cancel-label "Exit" \
+		--title "SLAMer" \
+		--menu "Compilation Configuration" 15 55 5 \
+			1 "Tool chaine" \
+			2 "Options" \
+			3 "Path" \
+			4 "Mode" \
+			5 "Patch" \
+			6 "Compiler" 2> $tmpFile
+
+	retv=$?
+	choice=$(cat $tmpFile)
+	[ $retv -eq 1 -o $retv -eq 255 ] && rm $tmpFile && clear && exit
+
+
+	case $choice in
+		1) 	tools
+			main
+			;;
+		2) 	options
+			main
+			;;
+		3) 	path
+			main
+			;;
+		4) 	mode
+			main
+			;;
+		5) 	patch
+			main
+			;;
+		6) 	clear
+			make
+			echo "press [Enter] to continue"
+			read scan
+			main
+			;;
+	esac
+}
+
+main

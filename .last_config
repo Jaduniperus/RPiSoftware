@@ -1,0 +1,8 @@
+
+HARD_ARCH=natif
+TARGET=
+MODE=debug
+WARNING=std
+GPROF=off
+GDB=off
+LINKAGE=dynamique
