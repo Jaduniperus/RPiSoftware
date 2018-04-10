@@ -1,0 +1,30 @@
+PIN CONNEXION
+-------------
+
+// PIN PR/ "simplifying fault condition recovery at power up"
+// PIN SHDN/ met le composant en veille + tout est coupé + les réglages précédant
+		la mise en veille sont sauvegardés
+// PULL UP resistor sur la pin SDO
+
+
+SOFTWARE UTILISATION
+--------------------
+
+// COMMUNICATION VIA TROIS CABLES
+	-> CLK (clock)
+	-> CS/ (select input)  // need clear transition // utilisation de relais possible par ex
+	-> SDI (serial data input)
+
+// FONCTIONNEMENT DE CS/
+	-> SI HIGH : component isn't selected
+	-> SI LOW  : data are loaded into component
+
+// COMMUNICATION SUR 11 bits
+	-> 3 pour l'addressage [A2 A1 A0]
+	-> 8 pour de données   [D7 ..... D0]
+
+// Triplet d'addressage fonctionne tel que:
+	[A2 A1 A0] = [0 0 0] pour RDAC1, soit input 1 du digipot
+	[A2 A1 A0] = [0 0 1] pour RDAC1, soit input 2 du digipot
+	[A2 A1 A0] = [0 1 0] pour RDAC1, soit input 3 du digipot
+	[A2 A1 A0] = [0 1 1] pour RDAC1, soit input 4 du digipot

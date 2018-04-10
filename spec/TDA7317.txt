@@ -17,3 +17,6 @@ pin 12 : audio Left output
 pin 19 : audio Right output
 pin 30 : audio Right input
 -----------------------
+
+SOFTWARE UTILISATION
+---------------------
