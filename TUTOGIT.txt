@@ -1,0 +1,16 @@
+// PARAMETRES DU GIT
+
+// USERNAME: Mrpbasse
+// MDP: Sup********github*******
+
+// REPOSITORY NAME: SpellAudio
+// REPOSITORY MAIL: philippe.guelen@gmail
+
+dans le repertoire général (~/Documents/loudspeakerSoftware)
+
+// AJOUTER UN FICHIER: git add fichier.extension
+// SYNCHRONISER TOUT LE REPERTOIRE: git add --all
+
+// APPLIQUER MODIFICATIONS: git status
+
+// SYNCHRONISER TOUT LE GIT ONLINE: git commit -am 'titre du commit'
