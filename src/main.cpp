@@ -31,13 +31,13 @@ using namespace std;
  */
 
 // Definition des pin GPIO utilisées
-#define LedPin 29
+#define RelayPin 29
 
 int main() 
 {
 
   // Définition des variables du programme
-     
+  int state = 0;
   // Initialisation de wiringPi
     if(wiringPiSetup() == -1) //when initialize wiringPi failed, print message to screen
     { 
@@ -78,15 +78,13 @@ int main()
 */
     
   // Initialisation de l'ensemble des pin utilisées comme GPIO
-  pinMode(LedPin, OUTPUT);
+  pinMode(RelayPin, OUTPUT);
 
   // Boucle infinie du programme
   do
-  {    
-      digitalWrite(LedPin, LOW);   //led on
-      delay(500);
-      digitalWrite(LedPin, HIGH);   //led off
-      delay(500);
+  {
+    cin >> state;
+    if(state == 0 || state == 1) digitalWrite(RelayPin, state);
   }
   while(1);
   
