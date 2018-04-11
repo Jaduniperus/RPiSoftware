@@ -6,11 +6,11 @@ pin 15 : GND <-> pin 06 RPi
 pin 16 : SCL <-> pin 05 RPi
 pin 17 : SDA <-> pin 03 RPi
 pin 18 : ADD
-	si ADD = GNd => 0x42
-	si ADD = 9V (ou rien) => 0x43
+	si ADD = GNd => 0x84
+	si ADD = 9V (ou rien) => 0x86
 Pour nous on a 
-TDA avec filtres bass: ADD = 9V, 0x43
-TDA avec filtres aigus: ADD = GND, 0x42
+TDA avec filtres bass: ADD = 9V, 0x86
+TDA avec filtres aigus: ADD = GND, 0x84
 -----------------------
 pin 1 : audio Left input
 pin 12 : audio Left output

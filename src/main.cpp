@@ -49,43 +49,35 @@ using namespace std;
 * PULL UP sur SDA et SCL
 */
 
-int TDAVolume(char command)
-{
-  if(command == '0,375')
-}
-
 int main() 
 {
 
   // Définition des variables du programme
   int state = 0; // Niveau du relais: 1 = fermé (contact) 0 = ouvert (pas contact)
-  int commandTDA[18];
+  int commandTDA[21];
 
-  commandTDA[0] = 0x00;
-  commandTDA[1] = 0x01;
-  commandTDA[2] = 0x02;
-  commandTDA[3] = 0x03;
-  commandTDA[4] = 0x04;
-  commandTDA[5] = 0x05;
-  commandTDA[6] = 0x06;
-  commandTDA[7] = 0x07;
-  commandTDA[8] = 0x00;
-  commandTDA[9] = 0x08;
-  commandTDA[10] = 0x09;
-  commandTDA[11] = 0x10;
-  commandTDA[12] = 0x11;
-  commandTDA[13] = 0x12;
-  commandTDA[14] = 0x13;
-  commandTDA[15] = ;
-  commandTDA[16] = ;
-  commandTDA[17] = ;
-
-
-
-
-
-
-  }
+  commandTDA[0] = 0x00; // 0.375db step // 0
+  commandTDA[1] = 0x01; // -0.372
+  commandTDA[2] = 0x02; // -0.75
+  commandTDA[3] = 0x03; // -1.125
+  commandTDA[4] = 0x04; // -1.5
+  commandTDA[5] = 0x05; // -1.875
+  commandTDA[6] = 0x06; // -2.25
+  commandTDA[7] = 0x07; // -2.625
+  commandTDA[8] = 0x00; // 3 dB step // 0
+  commandTDA[9] = 0x08; //-3
+  commandTDA[10] = 0x09; // -6
+  commandTDA[11] = 0x10; // -9
+  commandTDA[12] = 0x11; // -12
+  commandTDA[13] = 0x12; // -15
+  commandTDA[14] = 0x80; // 2 dB step // 0
+  commandTDA[15] = 0x81; // 2 dB
+  commandTDA[16] = 0x82; // 4 dB
+  commandTDA[17] = 0x83; // 6 dB
+  commandTDA[18] = 0x81; // 8 dB
+  commandTDA[19] = 0x82; // 10 dB
+  commandTDA[20] = 0x83; // 12 dB
+  commandTDA[21] = 0x81; // 14 dB
 
   // Initialisation de wiringPi
     if(wiringPiSetup() == -1) //when initialize wiringPi failed, print message to screen
@@ -96,8 +88,8 @@ int main()
 
 
   // Initialisation des périphériques i2c au moyen de wiringPiI2CSetup
-  int devIdTDABass = 0x86;
-  int devIdTDATrebble = 0x84;
+  int devIdTDABass = 0x43;
+  int devIdTDATrebble = 0x42;
   // création de l'objet I2C à l'adresse 0x86 (pour TDA bass)
 	int I2C_TDABASS = wiringPiI2CSetup(devIdTDABass);
   // test validant la création de l'objet I2C
@@ -129,14 +121,13 @@ int main()
     
   // Initialisation de l'ensemble des pin utilisées comme GPIO
   pinMode(RelayPin, OUTPUT);
-  //pullUpDnControl(pin, mode) permet de configurer une pin en mode pull-up, pull-down ...
-
+  pullUpDnControl(8, PUD_UP); //permet de configurer une pin en mode pull-up, pull-down ...
+  pullUpDnControl(9, PUD_UP);
   // Boucle infinie du programme
   do
   {
     cin >> state;
-    if(state == 0 || state == 1) digitalWrite(RelayPin, state);
-
+    wiringPiI2CWrite(I2C_TDABASS,state);
   }
   while(1);
   
