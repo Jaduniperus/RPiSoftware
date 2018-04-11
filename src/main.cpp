@@ -102,7 +102,6 @@ int main()
   {
     cin >> state;
     value = wiringPiI2CWrite(I2C_TDABASS,state);
-    cout << value << endl;
   }
   while(1);
     return 0;
