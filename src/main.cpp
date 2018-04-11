@@ -4,6 +4,8 @@
 #include <string.h>
 #include <iostream>
 #include <errno.h>
+
+#include <wiringPi.h>
 #include <wiringPiI2C.h>
 #include <wiringPiSPI.h>
 
@@ -29,7 +31,7 @@ using namespace std;
  */
 
 // Definition des pin GPIO utilisées
-#define LedPin 0;
+#define LedPin 29
 
 int main() 
 {
@@ -43,7 +45,7 @@ int main()
     return -1; 
   }
 
-
+/*
   // Initialisation des périphériques i2c au moyen de wiringPiI2CSetup
   int devIdTDABass = 0x43;
   int devIdTDATrebble = 0x42;
@@ -73,7 +75,7 @@ int main()
   // test validant la création de l'objet I2C
     if(SPI_AD2 < 0) cout << "Error. AD2 Errno is: " << errno << endl;
     else  cout << "Init result for AD2: "<< SPI_AD2 << endl;
-
+*/
     
   // Initialisation de l'ensemble des pin utilisées comme GPIO
   pinMode(LedPin, OUTPUT);
@@ -86,7 +88,7 @@ int main()
       digitalWrite(LedPin, HIGH);   //led off
       delay(500);
   }
-  while(1)
+  while(1);
   
     return 0;
 }
