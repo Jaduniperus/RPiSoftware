@@ -12,8 +12,9 @@ SOFTWARE UTILISATION
 
 // COMMUNICATION VIA TROIS CABLES
 	-> CLK (clock)
-	-> CS/ (select input)  // need clear transition // utilisation de relais possible par ex
-	-> SDI (serial data input)
+	-> CS/ (select input) 
+	-> SDI (serial data input) [MOSI] branché sur MISO du slave
+	-> SDO [MISO] inutilisé ici
 
 // FONCTIONNEMENT DE CS/
 	-> SI HIGH : component isn't selected
