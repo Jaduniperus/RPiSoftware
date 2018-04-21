@@ -29,3 +29,8 @@ SOFTWARE UTILISATION
 	[A2 A1 A0] = [0 0 1] pour RDAC1, soit input 2 du digipot
 	[A2 A1 A0] = [0 1 0] pour RDAC1, soit input 3 du digipot
 	[A2 A1 A0] = [0 1 1] pour RDAC1, soit input 4 du digipot
+
+// Envoyer 
+		-> wiringPi
+		-> wiringPiSPIWrite(int num_pot)      0 < num_pot < 4
+		-> wiringPiSPIWrite(int level)        0 < level < 255

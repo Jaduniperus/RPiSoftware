@@ -53,11 +53,12 @@ int main()
   // Définition des variables du programme
   int state = 0; // Niveau du relais: 1 = fermé (contact) 0 = ouvert (pas contact)
   unsigned char init;     // Lecture des conditions d'activation des périphériques série
-  char read[8]; // Lecture des commande hexa opur TDA
+  //char read[8]; // Lecture des commande hexa opur TDA
+  uint8_t read;
   int ack; // int recu apres un wiringPiI2CWrite
 
   // Initialisation de wiringPi
-  if(wiringPiSetupSys() == -1) //when initialize wiringPi failed, print message to screen
+  if(wiringPiSetup() == -1) //when initialize wiringPi failed, print message to screen
   { 
     printf("setup wiringPi failed !\n");
     return -1; 
@@ -87,10 +88,11 @@ int main()
   if(I2C_TDATREBL < 0) 
     cout << "Error. TDA trebble Errno is: " << errno << endl;
 
-  /* Initialisation des périphériques SPI au moyen de wiringPiSPISetup
+  //Initialisation des périphériques SPI au moyen de wiringPiSPISetup
   int devIdAD1;
   int devIdAD2;
   int speed = 500000;
+  int cs = 10; // chip selection pin
 
   cout << "Utiliser le AD avec l'addresse  ? y/n" << endl;
   cin >> init;
@@ -100,27 +102,26 @@ int main()
     int SPI_AD1 = wiringPiSPISetup(devIdAD1, speed);
     // test validant la création de l'objet SPI
       if(SPI_AD1 < 0) cout << "Error. AD1 creation  Errno is: " << errno << endl;
-      // création de l'objet SPI à l'adresse (deuxième digipot)
+      /* création de l'objet SPI à l'adresse (deuxième digipot)
     int SPI_AD2 = wiringPiSPISetup(devIdAD2, speed);
     // test validant la création de l'objet SPI
-      if(SPI_AD2 < 0) cout << "Error. AD2 Errno is: " << errno << endl;
-  }*/
+      if(SPI_AD2 < 0) cout << "Error. AD2 Errno is: " << errno << endl;*/
+  }
   
   cout << "Fin de l'initialisation des périphériques série" << endl;
   
   // Boucle infinie du programme
+  while(true)
+  {
 
-    /*cout << "Byte de commande" << endl;
     cin >> read; 
-    cout << "read: " << read << endl;*/
-    ack = wiringPiI2CWrite(fd,0x00);
+    
+    ack = wiringPiI2CWrite(fd,read);
     cout << " ack = " << ack << endl;
-    if( ack < 0) 
-      {
-        cout << "Communication ratée" << endl;
-      }
+    if( ack < 0) cout << "Communication ratée" << endl;
     else cout << "Byte envoyé: " << read << endl;
-   
+
+  }
 
   cout << "FIN" << endl;
   return 0;
