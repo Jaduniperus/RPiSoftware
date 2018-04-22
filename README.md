@@ -1,2 +1,1 @@
-Creation of the repository of rpisoftware
-
+Repository of RPiSoftware developed by P. Guelen
