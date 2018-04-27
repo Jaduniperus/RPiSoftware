@@ -4,6 +4,7 @@
 #include <string.h>
 #include <iostream>
 #include <errno.h>
+#include <unistd.h>
 
 #include <wiringPi.h>
 #include <wiringPiI2C.h>
@@ -32,6 +33,8 @@ using namespace std;
 
 // Definition des pin GPIO utilisées
 #define RelayPin 29
+#define ADChipSelect 10
+
 
 /* I2C Start condition
 * SCL HIGH 
@@ -48,6 +51,34 @@ using namespace std;
 *
 * PULL UP sur SDA et SCL
 */
+
+void setPot(int pot, int level)
+{
+  uint8_t buff[2];
+  buff[0] = pot;
+  buff[1] = level;
+  digitalWrite(ADChipSelect, 0); //active le composant
+  wiringPiSPIDataRW(0, buff, 2);
+  digitalWrite(ADChipSelect, 1); //désactive le composant
+}
+
+void allOff()
+{
+  int z;
+  for(z=0; z<4; z++)
+  {
+    setPot(z,0);
+  }
+}
+
+void allOn()
+{
+  for(int z=0; z<4; z++)
+  {
+    setPot(z,255);
+  }
+}
+
 int main() 
 {
   // Définition des variables du programme
@@ -89,10 +120,9 @@ int main()
     cout << "Error. TDA trebble Errno is: " << errno << endl;
 
   //Initialisation des périphériques SPI au moyen de wiringPiSPISetup
-  int devIdAD1;
-  int devIdAD2;
+  int devIdAD1 = 0;
+  int devIdAD2 = 1;
   int speed = 500000;
-  int cs = 10; // chip selection pin
 
   cout << "Utiliser le AD avec l'addresse  ? y/n" << endl;
   cin >> init;
@@ -102,24 +132,43 @@ int main()
     int SPI_AD1 = wiringPiSPISetup(devIdAD1, speed);
     // test validant la création de l'objet SPI
       if(SPI_AD1 < 0) cout << "Error. AD1 creation  Errno is: " << errno << endl;
-      /* création de l'objet SPI à l'adresse (deuxième digipot)
+    //création de l'objet SPI à l'adresse (deuxième digipot)
     int SPI_AD2 = wiringPiSPISetup(devIdAD2, speed);
     // test validant la création de l'objet SPI
-      if(SPI_AD2 < 0) cout << "Error. AD2 Errno is: " << errno << endl;*/
+      if(SPI_AD2 < 0) cout << "Error. AD2 Errno is: " << errno << endl;
   }
   
   cout << "Fin de l'initialisation des périphériques série" << endl;
-  
+  uint8_t buff[2];
+  buff[0] = 0;
   // Boucle infinie du programme
   while(true)
   {
-
+    /*
     cin >> read; 
-    
+    /*
     ack = wiringPiI2CWrite(fd,read);
     cout << " ack = " << ack << endl;
     if( ack < 0) cout << "Communication ratée" << endl;
-    else cout << "Byte envoyé: " << read << endl;
+    else cout << "Byte envoyé: " << read << endl;*/
+
+
+    cout<<"Blink all"<<endl;
+    digitalWrite(ADChipSelect, 0); //active le composant   
+    //allOn();
+    buff[1] = 255;
+    wiringPiSPIDataRW(0, buff, 2);
+    digitalWrite(ADChipSelect, 1); //désactive le composant
+    usleep(1000*1000);
+
+
+    cout<<"Shut all"<<endl;
+    digitalWrite(ADChipSelect, 0); //active le composant   
+    //allOff();
+    buff[1] = 0;
+    wiringPiSPIDataRW(0, 0, 2);
+    digitalWrite(ADChipSelect, 1); //désactive le composant
+    usleep(1000*1000);
 
   }
 
