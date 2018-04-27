@@ -43,12 +43,12 @@ int channelAD1 = 0;
 int channelAD2 = 1;
 int speed = 1000000;
 
-void setPot(int pot, int level)
+void setPot(int channel, int pot, int level)
 {
   uint8_t buff[2];
   buff[0] = pot;
   buff[1] = level;
-  wiringPiSPIDataRW(0, buff, 2);
+  wiringPiSPIDataRW(channel, buff, sizeof(buff));
 }
 
 void allOff()
@@ -56,7 +56,7 @@ void allOff()
   int z;
   for(z=0; z<4; z++)
   {
-    setPot(z,0);
+    setPot(channelAD1,z,0);
   }
 }
 
@@ -64,9 +64,30 @@ void allOn()
 {
   for(int z=0; z<4; z++)
   {
-    setPot(z,255);
+    setPot(channelAD1,z,255);
   }
 }
+
+void setupSPI()
+{
+  for (int i = 0; i < 5; ++i)
+  {
+    allOn();
+    usleep(1000*300);
+    allOff();
+    usleep(1000*300);
+  }    
+}
+
+void rainbowSPI()
+{
+  for (int i = 0; i < 255; ++i)
+  {
+    setPot(channelAD1,0,i);
+    usleep(1000*5);
+  }
+}
+
 
 int main() 
 {
@@ -90,26 +111,19 @@ int main()
   //Initialisation des périphériques SPI
   wiringPiSPISetup(channelAD1, speed);
   wiringPiSPISetup(channelAD2, speed);
-
+  
+  setupSPI();
+  
   cout << "Fin de l'initialisation des périphériques série" << endl;
 
   // Boucle infinie du programme
+  
   while(true)
   {
     /*
     cin >> read; 
     wiringPiI2CWrite(fd,read);*/
-
-    cout<<"Blink all"<<endl;
-    buff[1] = SPION;
-    wiringPiSPIDataRW(channelAD1, buff, sizeof(buff));
-    usleep(1000*5000);
-
-
-    cout<<"Shut all"<<endl;
-    //allOff();
-    buff[1] = SPIOFF;
-    wiringPiSPIDataRW(channelAD1, buff, sizeof(buff));
+    rainbowSPI();
     usleep(1000*1000);
 
   }
