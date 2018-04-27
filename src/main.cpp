@@ -88,6 +88,18 @@ void rainbowSPI()
   }
 }
 
+void testFocal()
+{
+  
+  cout<<"vol 240/255" << endl;
+  setPot(channelAD1,0,240);
+    usleep(1000*3000);
+
+  cout<<"vol 255/255" << endl;
+    setPot(channelAD1,0,255);
+    usleep(1000*3000);
+}
+
 
 int main() 
 {
@@ -112,7 +124,7 @@ int main()
   wiringPiSPISetup(channelAD1, speed);
   wiringPiSPISetup(channelAD2, speed);
   
-  setupSPI();
+  //setupSPI();
   
   cout << "Fin de l'initialisation des périphériques série" << endl;
 
@@ -123,8 +135,8 @@ int main()
     /*
     cin >> read; 
     wiringPiI2CWrite(fd,read);*/
-    rainbowSPI();
-    usleep(1000*1000);
+    testFocal();
+    usleep(1000*10);
 
   }
 
