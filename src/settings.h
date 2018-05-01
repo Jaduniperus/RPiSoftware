@@ -2,6 +2,18 @@
 #define SETTINGS_H
 using namespace std;
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <string.h>
+#include <iostream>
+#include <errno.h>
+#include <unistd.h>
+
+#include <wiringPi.h>
+#include <wiringPiI2C.h>
+#include <wiringPiSPI.h>
+
 // Definition des pin GPIO utilisées
 #define RelayPin 29
 
