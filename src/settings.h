@@ -2,5 +2,24 @@
 #define SETTINGS_H
 using namespace std;
 
+// Definition des pin GPIO utilisées
+#define RelayPin 29
+
+#define I2CAddEgaliseur1 0x43 // Adresse du TDA gérant le filtre grave
+#define I2CAddEgaliseur2 0x42  // Adresse du TDA gérant le filtre aïgu
+
+#define SPIADVolMax 0 // Potentiomètre réglé au minimum => maximum de son
+#define SPIADVolMin 98 // Potentiomètre réglé au maximum => minimum de son
+#define SPIChannelAD1 0 // Chip sur bus SPI0
+#define SPIChannelAD2 1 // Chip sur bus SPI1
+#define SPISpeed 1000000
+
+#define SPIPotVoie1 0
+#define SPIPotVoie2 1
+#define SPIPotVoie3 2
+#define SPIPotVoie4 3
+#define SPIPotVoie5 0
+#define SPIPotVoie6 1
+#define SPIPotVoieSub 2
 
 #endif

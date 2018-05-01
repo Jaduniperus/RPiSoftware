@@ -31,17 +31,7 @@ using namespace std;
  * Fin de l'architecture
  */
 
-// Definition des pin GPIO utilisées
-#define RelayPin 29
-#define ADChipSelect 10
-#define SPION 0x00
-#define SPIOFF 0xFF
 
-char devIdTDABass = 0x43;
-char devIdTDATrebble = 0x42;
-int channelAD1 = 0;
-int channelAD2 = 1;
-int speed = 1000000;
 
 void setPot(int channel, int pot, int level)
 {
@@ -51,80 +41,62 @@ void setPot(int channel, int pot, int level)
   wiringPiSPIDataRW(channel, buff, sizeof(buff));
 }
 
-void allOff()
+void SPIAllOff()
 {
   int z;
   for(z=0; z<4; z++)
   {
-    setPot(channelAD1,z,0);
+    setPot(SPIChannelAD1,z,SPIADVolMin);
+    setPot(SPIChannelAD2,z,SPIADVolMin);
   }
 }
 
-void allOn()
+void SPISetup()
+{  
+  SPIAllOff();  
+  cout << "Toutes les voies des AD5204 sont au minimum" << endl;
+}
+
+void SPIRainbow()
 {
-  for(int z=0; z<4; z++)
+  cout << "Augmentation du volume" << endl;
+  for (int i = SPIADVolMin; i < SPIADVolMax; --i)
   {
-    setPot(channelAD1,z,255);
+    setPot(SPIChannelAD1,SPIPotVoie1,i);
+    usleep(1000*5);
   }
-}
 
-void setupSPI()
-{
-  for (int i = 0; i < 5; ++i)
+  cout << "Diminution du volume" << endl;
+  for (int i = SPIADVolMax; i < SPIADVolMin; ++i)
   {
-    allOn();
-    usleep(1000*300);
-    allOff();
-    usleep(1000*300);
-  }    
-}
-
-void rainbowSPI()
-{
-  for (int i = 0; i < 255; ++i)
-  {
-    setPot(channelAD1,0,i);
+    setPot(SPIChannelAD1,SPIPotVoie1,i);
     usleep(1000*5);
   }
 }
 
-void testFocal()
-{
-  
-  cout<<"vol 240/255" << endl;
-  setPot(channelAD1,0,240);
-    usleep(1000*3000);
-
-  cout<<"vol 255/255" << endl;
-    setPot(channelAD1,0,255);
-    usleep(1000*3000);
-}
-
-
 int main() 
 {
   // Définition des variables du programme
-  int state = 0; // Niveau du relais: 1 = fermé (contact) 0 = ouvert (pas contact)
-  uint8_t read;
-  unsigned char buff[2];
-  buff[0] = 0x00;
+  int read;
 
   // Initialisation de wiringPi
   wiringPiSetup();
 
   // Initialisation de l'ensemble des pin utilisées comme GPIO
   pinMode(RelayPin, OUTPUT);
-  pinMode(ADChipSelect, OUTPUT);
+  int state = 0; // Niveau du relais: 1 = fermé (contact) 0 = ouvert (pas contact)
 
   // Initialisation des périphériques I2C
-	wiringPiI2CSetup((int)devIdTDABass);
-  wiringPiI2CSetup((int)devIdTDATrebble);
+	wiringPiI2CSetup((int)I2CAddEgaliseur1);
+  wiringPiI2CSetup((int)I2CAddEgaliseur2);
 
   //Initialisation des périphériques SPI
-  wiringPiSPISetup(channelAD1, speed);
-  wiringPiSPISetup(channelAD2, speed);
+  unsigned char buff[2];
+  buff[0] = 0x00;
+  wiringPiSPISetup(SPIChannelAD1, SPISpeed);
+  wiringPiSPISetup(SPIChannelAD2, SPISpeed);
   
-  //setupSPI();
+  SPISetup();
   
   cout << "Fin de l'initialisation des périphériques série" << endl;
 
@@ -132,10 +104,10 @@ int main()
   
   while(true)
   {
-    /*
+    
     cin >> read; 
-    wiringPiI2CWrite(fd,read);*/
-    testFocal();
+    //wiringPiI2CWrite(fd,read);*/
+    setPot(SPIChannelAD1,SPIPotVoie1,read);
     usleep(1000*10);
 
   }
