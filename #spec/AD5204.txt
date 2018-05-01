@@ -1,11 +1,20 @@
 PIN CONNEXION
 -------------
+AD 5204 <--> RASPBERRY PI3
+ 
+ GND 		  GND (communs)
+ CS 			CE0 (pin 24) pour le 1er et CE1 (pin 26) pour le 2e
+ PR 			5V
+ VDD 			5V
+ SHDN 			5V
+ SDI			SPI_MOSI (pin 19)
+ CLK 			SPI_CLK	(pin 23)
+ VSS			GND
 
-// PIN PR/ "simplifying fault condition recovery at power up"
-// PIN SHDN/ met le composant en veille + tout est coupé + les réglages précédant
-		la mise en veille sont sauvegardés
-// PULL UP resistor sur la pin SDO
-
+ INPUT SUR LES Bi
+ OUTPUT SUR LES WI
+ Ai a la masse
+ SDO a la masse	
 
 SOFTWARE UTILISATION
 --------------------
@@ -13,24 +22,16 @@ SOFTWARE UTILISATION
 // COMMUNICATION VIA TROIS CABLES
 	-> CLK (clock)
 	-> CS/ (select input) 
-	-> SDI (serial data input) [MOSI] branché sur MISO du slave
-	-> SDO [MISO] inutilisé ici
+	-> SDI (serial data input) [MOSI/SDO sur master] branché sur MISO/SDI du slave
 
 // FONCTIONNEMENT DE CS/
-	-> SI HIGH : component isn't selected
-	-> SI LOW  : data are loaded into component
-
-// COMMUNICATION SUR 11 bits
-	-> 3 pour l'addressage [A2 A1 A0]
-	-> 8 pour de données   [D7 ..... D0]
-
-// Triplet d'addressage fonctionne tel que:
-	[A2 A1 A0] = [0 0 0] pour RDAC1, soit input 1 du digipot
-	[A2 A1 A0] = [0 0 1] pour RDAC1, soit input 2 du digipot
-	[A2 A1 A0] = [0 1 0] pour RDAC1, soit input 3 du digipot
-	[A2 A1 A0] = [0 1 1] pour RDAC1, soit input 4 du digipot
+	-> CE0 (wpi pin 10) pour selectionner le composant bus SPI0
+	-> CE1 (wpi pin 11) -----------------------------------SPI1
 
 // Envoyer 
-		-> wiringPi
-		-> wiringPiSPIWrite(int num_pot)      0 < num_pot < 4
-		-> wiringPiSPIWrite(int level)        0 < level < 255
+		-> créer un buffer 
+				uint8_t buff[2];
+		-> le remplir avec 
+			buff[0]: numéro potard
+			buff[1]: niveau a appliquer
+		-> wiringPiSPIDataRW(channel, buffer, sizeof(buffer))
