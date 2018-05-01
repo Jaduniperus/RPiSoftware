@@ -4,7 +4,7 @@
 include .config.mk
 
 FLAGS+= -D'BY_LINUX_MAKEFILE'
-LDFLAGS+=
+LDFLAGS+= -lwiringPi
 
 LAST_HARD_ARCH=null
 LAST_MODE=null
@@ -194,4 +194,25 @@ printEnv:
 	@echo "EQ_WARNING="$(EQ_WARNING)
 	@echo "EQ_GPROF="$(EQ_GPROF)
 	@echo "EQ_GDB="$(EQ_GDB)
-	@echo "EQ_LINKAGE="$(EQ_LINKAGE)
+	@echo "EQ_LINKAGE="$(EQ_LINKAGE)# DO NOT DELETE
+
+./src/spifunctions.o: /home/pi/Documents/loudspeakerSoftware/src/settings.h
+./src/spifunctions.o: /home/pi/Documents/loudspeakerSoftware/src/spifunctions.h
+./src/sdk/src/arch/linux/timer.o: ./src/sdk/src/arch/linux/arch_linux.h
+./src/sdk/src/arch/linux/timer.o: ./src/sdk/src/arch/linux/timer.h
+./src/sdk/src/arch/linux/net_serial.o: ./src/sdk/src/arch/linux/arch_linux.h
+./src/sdk/src/arch/linux/net_serial.o: ./src/sdk/src/arch/linux/timer.h
+./src/sdk/src/arch/linux/net_serial.o: ./src/sdk/src/arch/linux/net_serial.h
+./src/sdk/src/arch/linux/net_serial.o: ./src/sdk/src/hal/abs_rxtx.h
+./src/sdk/src/hal/thread.o: ./src/sdk/src/hal/thread.h
+./src/sdk/src/hal/thread.o: ./src/sdk/src/arch/linux/thread.hpp
+./src/sdk/src/hal/thread.o: ./src/sdk/src/arch/linux/arch_linux.h
+./src/sdk/src/hal/thread.o: ./src/sdk/src/arch/linux/timer.h
+./src/main.o: /home/pi/Documents/loudspeakerSoftware/src/settings.h
+./src/main.o: /home/pi/Documents/loudspeakerSoftware/src/spifunctions.h
+# DO NOT DELETE
+
+./src/spifunctions.o: /home/pi/Documents/loudspeakerSoftware/src/settings.h
+./src/spifunctions.o: /home/pi/Documents/loudspeakerSoftware/src/spifunctions.h
+./src/main.o: /home/pi/Documents/loudspeakerSoftware/src/settings.h
+./src/main.o: /home/pi/Documents/loudspeakerSoftware/src/spifunctions.h

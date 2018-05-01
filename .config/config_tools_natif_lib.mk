@@ -1,1 +1,1 @@
-LIB=-lstdc++ -lpthread
+LIB=-lstdc++ -lpthread -lwiringPi
