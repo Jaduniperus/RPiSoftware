@@ -110,3 +110,26 @@ void i2cChip::i2cGpioAllOn()
 			usleep(1000*100);
 		}
 }
+
+void i2cChip::i2cGpioWriteMode(int r1, int r2, int r3, int r4)
+{
+	i2cGpioWrite(0,r1);
+	i2cGpioWrite(1,r2);
+	i2cGpioWrite(2,r3);
+	i2cGpioWrite(3,r4);
+}
+
+void i2cChip::i2cGpioLeft()
+{
+	i2cGpioWriteMode(GPIOCLOSE,GPIOOPEN,GPIOCLOSE,GPIOOPEN);
+}
+
+void i2cChip::i2cGpioRight()
+{
+	i2cGpioWriteMode(GPIOOPEN,GPIOCLOSE,GPIOOPEN,GPIOCLOSE);
+}
+
+void i2cChip::i2cGpioStereo()
+{
+	i2cGpioWriteMode(GPIOOPEN,GPIOOPEN,GPIOCLOSE,GPIOCLOSE);
+}

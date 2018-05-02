@@ -53,10 +53,14 @@ int main()
         spiChip1.spiWrite(SPIPotVoie1,read);
 
       if(mode == 3)
-        i2cGpioExp.i2cGpioAllOn();
+        i2cGpioExp.i2cGpioLeft();
 
       if(mode == 4)
-        i2cGpioExp.i2cGpioAllOff();
+        i2cGpioExp.i2cGpioRight();
+
+      if(mode == 5)
+        i2cGpioExp.i2cGpioStereo();
+
     }
 
     usleep(1000*10);
