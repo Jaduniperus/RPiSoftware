@@ -1,25 +1,8 @@
 #include "/home/pi/Documents/loudspeakerSoftware/src/settings.h" 
 #include "/home/pi/Documents/loudspeakerSoftware/src/i2cChip.h" 
-#include "/home/pi/Documents/loudspeakerSoftware/src/spifunctions.h" 
+#include "/home/pi/Documents/loudspeakerSoftware/src/spiChip.h" 
 
 using namespace std;
-
-/*
- *  Architecture du code
- * ------------------------
- * Initialisation de wiringPi
- * Initialisation de la liaison I2C avec les deux TDA 7317
- * Initialisation de la liaison SPI avec les deux AD 5204
- * Initialisation de l'ensemble des pin utilisées comme GPIO
- *
- * Boucle while(1)
- * *  
- * * 
- * * 
- * * 
- * ------------------------
- * Fin de l'architecture
- */
 
 int main() 
 {
@@ -39,13 +22,9 @@ int main()
   i2cChip i2cEgaliseur2((int)I2CAddEgaliseur2); 
 
   //Initialisation des périphériques SPI
-  unsigned char buff[2];
-  buff[0] = 0x00;
-  wiringPiSPISetup(SPIChannelAD1, SPISpeed);
-  wiringPiSPISetup(SPIChannelAD2, SPISpeed);
-  
-  SPISetup();
-  
+  spiChip spiChip1((int)SPIChannelAD1);
+  spiChip spiChip2((int)SPIChannelAD2);
+
   cout << "Fin de l'initialisation des périphériques série" << endl;
 
   // Boucle infinie du programme
@@ -61,7 +40,7 @@ int main()
       i2cEgaliseur1.i2cWrite(read);
       
     if(mode == 2) 
-      setPot(SPIChannelAD1,SPIPotVoie1,read);
+      spiChip1.spiWrite(SPIPotVoie1,read);
     usleep(1000*10);
 
   }

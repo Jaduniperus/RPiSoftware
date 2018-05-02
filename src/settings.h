@@ -1,6 +1,5 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
-using namespace std;
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,8 +16,12 @@ using namespace std;
 // Definition des pin GPIO utilisées
 #define RelayPin 29
 
+// Definitions des constantes pour l'I2C
+
 #define I2CAddEgaliseur1 0x43 // Adresse du TDA gérant le filtre grave
 #define I2CAddEgaliseur2 0x42  // Adresse du TDA gérant le filtre aïgu
+
+// Definitions des constantes pour le SPI
 
 #define SPIADVolMax 0 // Potentiomètre réglé au minimum => maximum de son
 #define SPIADVolMin 98 // Potentiomètre réglé au maximum => minimum de son

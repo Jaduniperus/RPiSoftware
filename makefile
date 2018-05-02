@@ -196,26 +196,12 @@ printEnv:
 	@echo "EQ_GDB="$(EQ_GDB)
 	@echo "EQ_LINKAGE="$(EQ_LINKAGE)# DO NOT DELETE
 
-./src/spifunctions.o: /home/pi/Documents/loudspeakerSoftware/src/settings.h
-./src/spifunctions.o: /home/pi/Documents/loudspeakerSoftware/src/spifunctions.h
-./src/sdk/src/arch/linux/timer.o: ./src/sdk/src/arch/linux/arch_linux.h
-./src/sdk/src/arch/linux/timer.o: ./src/sdk/src/arch/linux/timer.h
-./src/sdk/src/arch/linux/net_serial.o: ./src/sdk/src/arch/linux/arch_linux.h
-./src/sdk/src/arch/linux/net_serial.o: ./src/sdk/src/arch/linux/timer.h
-./src/sdk/src/arch/linux/net_serial.o: ./src/sdk/src/arch/linux/net_serial.h
-./src/sdk/src/arch/linux/net_serial.o: ./src/sdk/src/hal/abs_rxtx.h
-./src/sdk/src/hal/thread.o: ./src/sdk/src/hal/thread.h
-./src/sdk/src/hal/thread.o: ./src/sdk/src/arch/linux/thread.hpp
-./src/sdk/src/hal/thread.o: ./src/sdk/src/arch/linux/arch_linux.h
-./src/sdk/src/hal/thread.o: ./src/sdk/src/arch/linux/timer.h
-./src/main.o: /home/pi/Documents/loudspeakerSoftware/src/settings.h
-./src/main.o: /home/pi/Documents/loudspeakerSoftware/src/spifunctions.h
 # DO NOT DELETE
 
-./src/spifunctions.o: /home/pi/Documents/loudspeakerSoftware/src/settings.h
-./src/spifunctions.o: /home/pi/Documents/loudspeakerSoftware/src/spifunctions.h
 ./src/main.o: /home/pi/Documents/loudspeakerSoftware/src/settings.h
 ./src/main.o: /home/pi/Documents/loudspeakerSoftware/src/i2cChip.h
-./src/main.o: /home/pi/Documents/loudspeakerSoftware/src/spifunctions.h
+./src/main.o: /home/pi/Documents/loudspeakerSoftware/src/spiChip.h
+./src/spiChip.o: /home/pi/Documents/loudspeakerSoftware/src/settings.h
+./src/spiChip.o: /home/pi/Documents/loudspeakerSoftware/src/spiChip.h
 ./src/i2cChip.o: /home/pi/Documents/loudspeakerSoftware/src/settings.h
 ./src/i2cChip.o: /home/pi/Documents/loudspeakerSoftware/src/i2cChip.h
