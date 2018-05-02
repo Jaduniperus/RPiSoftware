@@ -24,6 +24,7 @@ int main()
 {
   // Définition des variables du programme
   int read;
+  int mode;
 
   // Initialisation de wiringPi
   wiringPiSetup();
@@ -33,7 +34,7 @@ int main()
   int state = 0; // Niveau du relais: 1 = fermé (contact) 0 = ouvert (pas contact)
 
   // Initialisation des périphériques I2C
-	wiringPiI2CSetup((int)I2CAddEgaliseur1);
+	int fd = wiringPiI2CSetup((int)I2CAddEgaliseur1);
   wiringPiI2CSetup((int)I2CAddEgaliseur2);
 
   //Initialisation des périphériques SPI
@@ -50,10 +51,15 @@ int main()
   
   while(true)
   {
+    cout << "Mode :";
+    cin >> mode;
+    cout << "Commande ";
+    cin >> read;
     
-    cin >> read; 
-    //wiringPiI2CWrite(fd,read);*/
-    setPot(SPIChannelAD1,SPIPotVoie1,read);
+    if(mode == 1)
+      wiringPiI2CWrite(fd,read);
+    if(mode == 2) 
+      setPot(SPIChannelAD1,SPIPotVoie1,read);
     usleep(1000*10);
 
   }
