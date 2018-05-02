@@ -1,4 +1,5 @@
 #include "/home/pi/Documents/loudspeakerSoftware/src/settings.h" 
+#include "/home/pi/Documents/loudspeakerSoftware/src/i2cChip.h" 
 #include "/home/pi/Documents/loudspeakerSoftware/src/spifunctions.h" 
 
 using namespace std;
@@ -34,8 +35,8 @@ int main()
   int state = 0; // Niveau du relais: 1 = fermé (contact) 0 = ouvert (pas contact)
 
   // Initialisation des périphériques I2C
-	int fd = wiringPiI2CSetup((int)I2CAddEgaliseur1);
-  wiringPiI2CSetup((int)I2CAddEgaliseur2);
+  i2cChip i2cEgaliseur1((int)I2CAddEgaliseur1);
+  i2cChip i2cEgaliseur2((int)I2CAddEgaliseur2); 
 
   //Initialisation des périphériques SPI
   unsigned char buff[2];
@@ -57,7 +58,8 @@ int main()
     cin >> read;
     
     if(mode == 1)
-      wiringPiI2CWrite(fd,read);
+      i2cEgaliseur1.i2cWrite(read);
+      
     if(mode == 2) 
       setPot(SPIChannelAD1,SPIPotVoie1,read);
     usleep(1000*10);

@@ -215,4 +215,7 @@ printEnv:
 ./src/spifunctions.o: /home/pi/Documents/loudspeakerSoftware/src/settings.h
 ./src/spifunctions.o: /home/pi/Documents/loudspeakerSoftware/src/spifunctions.h
 ./src/main.o: /home/pi/Documents/loudspeakerSoftware/src/settings.h
+./src/main.o: /home/pi/Documents/loudspeakerSoftware/src/i2cChip.h
 ./src/main.o: /home/pi/Documents/loudspeakerSoftware/src/spifunctions.h
+./src/i2cChip.o: /home/pi/Documents/loudspeakerSoftware/src/settings.h
+./src/i2cChip.o: /home/pi/Documents/loudspeakerSoftware/src/i2cChip.h
