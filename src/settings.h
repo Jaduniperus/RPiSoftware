@@ -12,6 +12,7 @@
 #include <wiringPi.h>
 #include <wiringPiI2C.h>
 #include <wiringPiSPI.h>
+#include <mcp23017.h>
 
 // Definition des pin GPIO utilisées
 #define RelayPin 29
@@ -20,6 +21,8 @@
 
 #define I2CAddEgaliseur1 0x43 // Adresse du TDA gérant le filtre grave
 #define I2CAddEgaliseur2 0x42  // Adresse du TDA gérant le filtre aïgu
+#define I2CAddGpioExpandeur 0x20
+#define I2CGPIOID 100
 
 // Definitions des constantes pour le SPI
 

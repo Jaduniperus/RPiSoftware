@@ -21,10 +21,21 @@ public:
 
 	void i2cReset();
 
+	void i2cGpioSetup();
+
 	void i2cSetNull();
+
+	void i2cGpioWrite(int numPin, int state);
+
+	void i2cGpioSwitch(int numPin);
+
+	void i2cGpioAllOff();
+
+	void i2cGpioAllOn();
 
 private:
 	int m_i2cChip;
+	int m_i2cGpioId;
 };
 
 #endif

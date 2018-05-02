@@ -19,7 +19,8 @@ int main()
 
   // Initialisation des périphériques I2C
   i2cChip i2cEgaliseur1((int)I2CAddEgaliseur1);
-  i2cChip i2cEgaliseur2((int)I2CAddEgaliseur2); 
+  i2cChip i2cEgaliseur2((int)I2CAddEgaliseur2);
+  i2cChip i2cGpioExp((int)I2CAddGpioExpandeur);
 
   //Initialisation des périphériques SPI
   spiChip spiChip1((int)SPIChannelAD1);
@@ -50,6 +51,12 @@ int main()
         
       if(mode == 2) 
         spiChip1.spiWrite(SPIPotVoie1,read);
+
+      if(mode == 3)
+        i2cGpioExp.i2cGpioAllOn();
+
+      if(mode == 4)
+        i2cGpioExp.i2cGpioAllOff();
     }
 
     usleep(1000*10);

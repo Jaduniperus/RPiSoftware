@@ -34,5 +34,7 @@
 #define TDAVOL225DB 6
 #define TDAVOL2625DB 7
 
+#define GPIOCLOSE 0
+#define GPIOOPEN 1
 
 #endif
