@@ -13,6 +13,16 @@ public:
 
 	void i2cWrite(int read);
 
+	int i2cCmdVolume(int x1, int x0);	
+		// concatène la commande pour le volume général du TDA
+
+	int i2cCmdBande(int x2, int x1, int x0); 
+		// concatène la commande par bande du TDA
+
+	void i2cReset();
+
+	void i2cSetNull();
+
 private:
 	int m_i2cChip;
 };

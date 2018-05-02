@@ -24,6 +24,7 @@
 // Definitions des constantes pour le SPI
 
 #define SPIADVolMax 0 // Potentiomètre réglé au minimum => maximum de son
+#define SPIADVolMed 49 // Potentiomètre réglé au minimum => maximum de son
 #define SPIADVolMin 98 // Potentiomètre réglé au maximum => minimum de son
 #define SPIChannelAD1 0 // Chip sur bus SPI0
 #define SPIChannelAD2 1 // Chip sur bus SPI1

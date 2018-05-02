@@ -205,3 +205,4 @@ printEnv:
 ./src/spiChip.o: /home/pi/Documents/loudspeakerSoftware/src/spiChip.h
 ./src/i2cChip.o: /home/pi/Documents/loudspeakerSoftware/src/settings.h
 ./src/i2cChip.o: /home/pi/Documents/loudspeakerSoftware/src/i2cChip.h
+./src/i2cChip.o: /home/pi/Documents/loudspeakerSoftware/src/i2cCommands.h

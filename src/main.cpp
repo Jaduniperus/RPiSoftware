@@ -33,16 +33,26 @@ int main()
   {
     cout << "Mode :";
     cin >> mode;
-    cout << "Commande ";
-    cin >> read;
-    
-    if(mode == 1)
-      i2cEgaliseur1.i2cWrite(read);
-      
-    if(mode == 2) 
-      spiChip1.spiWrite(SPIPotVoie1,read);
-    usleep(1000*10);
 
+    if(mode == 0)
+    {
+      i2cEgaliseur1.i2cSetNull();
+      spiChip1.spiSetOff();
+    }
+
+    else
+    {  
+      cout << "Commande ";
+      cin >> read;
+
+      if(mode == 1)
+        i2cEgaliseur1.i2cWrite(read);
+        
+      if(mode == 2) 
+        spiChip1.spiWrite(SPIPotVoie1,read);
+    }
+
+    usleep(1000*10);
   }
 
   cout << "FIN" << endl;

@@ -5,18 +5,22 @@ class spiChip
 {
 public:
 
-	spiChip();
-
 	spiChip(int spiChipAddress);
 
 	~spiChip();
 
 	void spiWrite(int pot, int level); // fct envoie un packet de données
 
-	void spiAllOff(); // met toutes les voies au minimum de volume
-					 // a un seul AD a la fois
-
 	void spiSetup();
+
+	void spiSetMed();
+
+	void spiSetMax();
+
+	void spiSetOff();
+
+	void spiAllOff(); 
+		// met toutes les voies au minimum de volume a un seul AD a la fois
 
 	void spiRainbow();
 
