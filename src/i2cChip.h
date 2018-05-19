@@ -27,7 +27,7 @@ public:
 
 	void i2cGpioWrite(int numPin, int state);
 
-	void i2cGpioWriteMode(int r1, int r2, int r3, int r4);
+	void i2cGpioWriteMode(int r1, int r2);
 
 	void i2cGpioSwitch(int numPin);
 
@@ -38,6 +38,7 @@ public:
 	void i2cGpioLeft();
 	void i2cGpioRight();
 	void i2cGpioStereo();
+	void i2cGpioMute();
 
 private:
 	int m_i2cChip;

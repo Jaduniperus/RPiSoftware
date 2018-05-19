@@ -39,7 +39,20 @@ int main()
     {
       i2cEgaliseur1.i2cSetNull();
       spiChip1.spiSetOff();
+      i2cGpioExp.i2cGpioAllOff();
     }
+
+    if(mode == 3)
+        i2cGpioExp.i2cGpioLeft();
+
+      if(mode == 4)
+        i2cGpioExp.i2cGpioRight();
+
+      if(mode == 5)
+        i2cGpioExp.i2cGpioStereo();
+
+      if(mode == 6)
+        i2cGpioExp.i2cGpioMute();
 
     else
     {  
@@ -51,15 +64,6 @@ int main()
         
       if(mode == 2) 
         spiChip1.spiWrite(SPIPotVoie1,read);
-
-      if(mode == 3)
-        i2cGpioExp.i2cGpioLeft();
-
-      if(mode == 4)
-        i2cGpioExp.i2cGpioRight();
-
-      if(mode == 5)
-        i2cGpioExp.i2cGpioStereo();
 
     }
 
