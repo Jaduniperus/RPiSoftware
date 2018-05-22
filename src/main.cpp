@@ -54,18 +54,21 @@ int main()
       if(mode == 6)
         i2cGpioExp.i2cGpioMute();
 
-    else
-    {  
-      cout << "Commande ";
-      cin >> read;
-
       if(mode == 1)
+      {
+        cout << "Commande TDA ";
+        cin >> read;
         i2cEgaliseur1.i2cWrite(read);
+      }
         
-      if(mode == 2) 
-        spiChip1.spiWrite(SPIPotVoie1,read);
-
-    }
+        
+      if(mode == 2)
+        {
+          cout << "Commande AD ";
+          cin >> read;
+          spiChip1.spiWrite(SPIPotVoie1,read);
+        }
+    
 
     usleep(1000*10);
   }
