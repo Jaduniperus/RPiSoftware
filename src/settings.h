@@ -15,7 +15,8 @@
 #include <mcp23017.h>
 
 // Definition des pin GPIO utilisées
-#define RelayPin 29
+#define RelayRight 1
+#define RelayLeft 0
 
 // Definitions des constantes pour l'I2C
 
